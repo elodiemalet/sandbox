@@ -2,27 +2,59 @@ var http    = require('http');
 var fs      = require('fs');
 var express = require('express');
 var app     = express();
+var session = require("express-session")({
+    secret: "my-secret",
+    resave: true,
+    saveUninitialized: true
+  });
 
-var server = http.createServer(function (req, res) {
-    fs.readFile('./index.html', 'utf-8', function (error, content) {
-        res.writeHead('200', {'Content-Type': "text/html"});
-        res.end(content);
-    });
+app.use(session);
+
+// Home
+app.get('/', function(req, res) {
+
+    res.sendFile(__dirname + '/index.html');
 });
 
-var io      = require('socket.io').listen(server);
-var session = require("express-session");
+var server = http.createServer(app);
+var io     = require('socket.io').listen(server);
+
+///////////////// Connexions : ///////////////////
+
 
 io.sockets.on('connection', function (socket) {
-      
-    socket.on('newperso', function (pseudo) {
-        session.pseudo = pseudo;
-        socket.emit('welcome', {msg: 'Bienvenue', pseudo});
-        socket.broadcast.emit('connected', {msg : 'connected', pseudo});
+
+    if(session.pseudo == undefined) {
+        session.pseudo = [];
+    }
+    
+    socket.on('login', function (hash) {
+        if(hash == false){
+            hash = socket.id;
+            socket.emit('hash', hash); 
+        }
+
+        if(session.pseudo[hash] == undefined) {
+            session.pseudo[hash] = 'Guest' +(Math.floor((Math.random() * 100) + 1) );
+        }
+
+        var client = session.pseudo[hash];
+
+        socket.emit('pseudo', client); 
+        socket.broadcast.emit('connected', {msg : 'connected', client});
+
+
+    });
+
+    socket.on('editperso', function (data) {
+        msg = session.pseudo[data.hash] + ' is now ' + data.np + ' !';
+        session.pseudo[data.hash] = data.np;
+
+        socket.broadcast.emit('info', {msg});
     });
 
     socket.on('message', function (message) {
-        var msg = message.msg, pseudo = message.pseudo;
+        var msg = message.msg, pseudo = session.pseudo[message.hash];
         socket.broadcast.emit('message', {msg, pseudo});
     });
 
