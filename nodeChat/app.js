@@ -1,7 +1,7 @@
-var http = require('http');
-var fs = require('fs');
-var express    = require('express');
-var app = express();
+var http    = require('http');
+var fs      = require('fs');
+var express = require('express');
+var app     = express();
 
 var server = http.createServer(function (req, res) {
     fs.readFile('./index.html', 'utf-8', function (error, content) {
@@ -10,8 +10,7 @@ var server = http.createServer(function (req, res) {
     });
 });
 
-var io = require('socket.io').listen(server);
-
+var io      = require('socket.io').listen(server);
 var session = require("express-session");
 
 io.sockets.on('connection', function (socket) {
