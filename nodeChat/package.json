@@ -1,0 +1,25 @@
+{
+    "name": "nodechat",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "start": "node ./app.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/elodiemalet/sandbox.git"
+    },
+    "author": "Elodie Malet",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/elodiemalet/sandbox/issues"
+    },
+    "homepage": "https://github.com/elodiemalet/sandbox#readme",
+    "devDependencies": {},
+    "dependencies": {
+        "express": "^4.15.4",
+        "express-session": "^1.15.5",
+        "socket.io": "^2.0.3"
+    }
+}
