@@ -20,6 +20,8 @@ const io = require("socket.io").listen(server);
 // Set session
 app.use(session);
 
+app.use('/', express.static(__dirname + '/public'));
+
 // Index route / home
 app.get("/", function (req, res) {
 
